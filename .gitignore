@@ -1,0 +1,35 @@
+MyNote.txt
+
+# Virtual environment
+venv/
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.env.local
+
+# Static files (if collected)
+staticfiles/
+
+# Media files
+media/
+
+# macOS files (if you ever work cross-platform)
+.DS_Store
+
+# Windows files
+Thumbs.db
