@@ -2,90 +2,121 @@
 
 {%block title%} Employee List{%endblock%}
 
-{%block content%}
-<div class="d-flex justify-content-between mb-3">
-  <h2>Employee List</h2>
-  <a class="btn btn-primary" href="{%url 'create'%}">Create Employee</a>
+{% block content %}
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+    <h2 class="h5 mb-0">
+      <i class="bi bi-people me-2 text-primary"></i>Employee List
+    </h2>
+  </div>
+
+  <div class="card-body">
+    {% if employees %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="text-nowrap">#</th>
+            <th scope="col" class="text-nowrap">Employee ID</th>
+            <th scope="col" class="text-nowrap">Employee Name</th>
+            <th scope="col" class="text-nowrap">Email</th>
+            <th scope="col" class="text-nowrap">Contact</th>
+            <th scope="col" class="text-nowrap text-end">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for employee in employees %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              <span class="badge bg-secondary">{{ employee.employee_id }}</span>
+            </td>
+            <td>{{ employee.employee_name }}</td>
+            <td>
+              <a href="mailto:{{ employee.employee_email }}" class="text-decoration-none">
+                {{ employee.employee_email}}
+              </a>
+            </td>
+            <td>{{ employee.employee_contact }}</td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm" role="group">
+                <a href="{% url 'update' employee.pk %}" class="btn btn-outline-primary" title="Edit">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                  data-id="{{ employee.pk }}" data-name="{{ employee.employee_name }}" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+
+                <a href="#" class="btn btn-outline-secondary" title="View">
+                  <i class="bi bi-eye"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-people display-5 text-muted"></i>
+      <h4 class="mt-3">No employees found</h4>
+      <p class="text-muted">Get started by adding your first employee</p>
+      <a href="{% url 'create' %}" class="btn btn-primary mt-2">
+        <i class="bi bi-plus-lg me-1"></i>Add Employee
+      </a>
+    </div>
+    {% endif %}
+  </div>
 </div>
 
-<table class="table table-bordered">
-  <thead class="table-dark">
-    <tr>
-      <th>#</th>
-      <th>Employee ID</th>
-      <th>Employee Name</th>
-      <th>Employee Email</th>
-      <th>Employee Contact</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion
+        </h5>
 
-  <tbody>
-    {%if employees%}
-    {%for employee in employees%}
-    <tr>
-      <td>{{forloop.counter}}</td>
-      <td>{{employee.employee_id}}</td>
-      <td>{{employee.employee_name}}</td>
-      <td>{{employee.employee_email}}</td>
-      <td>{{employee.employee_contact}}</td>
-      <td>
-        <a href="{%url 'update' employee.pk%}" class="btn btn-success btn-sm">
-          Edit
-        </a>
-
-        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-          data-id="{{employee.pk}}">
-          Delete
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
         </button>
-      </td>
+      </div>
 
-    </tr>
-    {%endfor%}{%else%}
-    <tr>
-      <td colspan="6" class="text-center">No employee found ...</td>
-    </tr>
-    {%endif%}
-  </tbody>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong><span id="employeeName"></span></strong>?</p>
+        <p class="text-danger"><small>This action cannot be undone.</small></p>
+      </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteModalLabel">
-            Confirm Delete
-          </h5>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Cancel
+        </button>
 
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <form method="POST" id="deleteForm">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i>Delete
           </button>
-        </div>
-
-        <div class="modal-body">
-          Are you sure you want to delte this Employee?
-        </div>
-
-        <div class="modal-footer">
-          <form method="POST" id="deleteForm">
-            {%csrf_token%}
-            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-          </form>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const deleteModal = document.getElementById('deleteModal');
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-      const button = event.relatedTarget;
-      const employeeId = button.getAttribute('data-id')
-      const deleteForm = document.getElementById('deleteForm');
-      deleteForm.action = `/delete/${employeeId}/`;
-    })
-  </script>
-</table>
-{%endblock%}
+<script>
+  const deleteModal = document.getElementById('deleteModal');
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const employeeId = button.getAttribute('data-id');
+    const employeeName = button.getAttribute('data-name');
+    const deleteForm = document.getElementById('deleteForm');
+
+    document.getElementById('employeeName').textContent = employeeName;
+    deleteForm.action = `/delete/${employeeId}/`;
+  });
+</script>
+{% endblock %}
