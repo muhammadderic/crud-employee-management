@@ -55,3 +55,20 @@ def update_employee(request, pk):
     else:
         form = EmployeeForm(instance=employee)
     return render(request, 'update.html', {'form':form})
+
+def delete_employee(request, pk):
+    """
+    View to delete an existing Employee model instance.
+
+    Retrieves the employee instance by primary key (pk). If the request is a POST,
+    deletes the employee instance and redirects to the list view. If the request is a GET,
+    renders a confirmation page to delete the employee.
+
+    :param request: The request object
+    :param pk: The primary key of the Employee to delete
+    :return: The rendered template
+    """
+    employee = Employee.objects.get(id= pk)
+    if request.method == "POST":
+        employee.delete()
+        return redirect('list')
