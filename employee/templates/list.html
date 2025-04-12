@@ -30,8 +30,9 @@
       <td>{{employee.employee_email}}</td>
       <td>{{employee.employee_contact}}</td>
       <td>
-        <!-- TODO: update to edit button -->
-        <p>Edit</p>
+        <a href="{%url 'update' employee.pk%}" class="btn btn-success btn-sm">
+          Edit
+        </a>
 
         <!-- TODO: update to delete button -->
         <p>Delete</p>
